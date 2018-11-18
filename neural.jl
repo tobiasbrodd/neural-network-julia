@@ -31,8 +31,6 @@ end
 function setup(input_size, hidden_sizes, output_size, epsilon=0.01)
     sizes = [input_size hidden_sizes output_size]
 
-    a = []
-
     W = []
     for i = 2:length(sizes)
         push!(W, randn((sizes[i-1], sizes[i])))
@@ -43,7 +41,7 @@ function setup(input_size, hidden_sizes, output_size, epsilon=0.01)
         push!(b, zeros((1, sizes[i])))
     end
 
-   return Network(a, W, b, epsilon, [])
+   return Network([], W, b, epsilon, [])
 end
 
 function forward!(network::Network, X)
