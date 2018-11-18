@@ -7,8 +7,8 @@ using .Neural, Gadfly
 export fixed_sequence_example, normal_sequence_example, random_sequence_example
 
 function grid(x_min, x_max, y_min, y_max, h)
-    n = floor(Int, (y_max - y_min) / h)
-    m = floor(Int, (x_max - x_min) / h)
+    n = floor(Int, (y_max - y_min) / h) + 1
+    m = floor(Int, (x_max - x_min) / h) + 1
     xx = zeros(n, m)
     yy = zeros(n, m)
     
@@ -125,10 +125,10 @@ function decision_boundary_example()
     X = randn((100, 2))
     y = zeros((100, 1))
 
-    quandrant = (q1=rand(-1:2:1), q2=rand(-1:2:1))
+    quandrant = (h1=rand(-1:2:1), h2=rand(-1:2:1))
 
     for i = 1:100
-        if quandrant.q1*X[i,1] > 0 && quandrant.q2*X[i,2] > 0
+        if quandrant.h1*X[i,1] > 0 && quandrant.h2*X[i,2] > 0
             y[i] = 1
         end 
     end
@@ -137,5 +137,7 @@ function decision_boundary_example()
     train!(network, X, y, 1000)
     plot_decision_boundary(network, X, y)
 end
+
+decision_boundary_example()
 
 end
