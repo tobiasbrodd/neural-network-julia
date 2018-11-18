@@ -117,7 +117,7 @@ function random_sequence_example()
     plot_predictions(network, X, y, X_scale, y_scale)
 end
 
-function random_decision_boundary_example()
+function decision_boundary_example()
     input_size = 2
     hidden_sizes = [10 20 30 20 10]
     output_size = 1
