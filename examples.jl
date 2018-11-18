@@ -6,6 +6,39 @@ using .Neural, Gadfly
 
 export fixed_sequence_example, normal_sequence_example, random_sequence_example
 
+function grid(x_min, x_max, y_min, y_max, h)
+    n = floor(Int, (y_max - y_min) / h)
+    m = floor(Int, (x_max - x_min) / h)
+    xx = zeros(n, m)
+    yy = zeros(n, m)
+    
+    for i = 1:n, j = 1:m
+        xx[i,j] = x_min + h*(j-1)
+    end
+
+    for i = 1:n, j = 1:m
+        yy[i,j] = y_min + h*(i-1)
+    end
+
+    return (xx, yy)
+end
+
+function plot_decision_boundary(network, X, y)
+    x_min = minimum(X[:, 1]) - 0.5
+    x_max = maximum(X[:, 1]) + 0.5
+    y_min = minimum(X[:, 2]) - 0.5
+    y_max = maximum(X[:, 2]) + 0.5
+    h = 0.01
+
+    xx, yy = grid(x_min, x_max, y_min, y_max, h)
+    xy = [reshape(xx, (size(xx, 1)*size(xx, 2), 1)) reshape(yy, (size(yy, 1)*size(yy, 2), 1))]
+    Z = reshape(round.(predict!(network, xy).result), size(xx))
+    Gadfly.push_theme(:dark)
+    boundary = layer(z=collect(transpose(Z)), x=xx[1, :], y=yy[:, 1], Geom.contour)
+    scatter = layer(x=X[:,1], y=X[:,2], color=y[:,1], Geom.point)
+    display(plot(boundary, scatter))
+end
+
 function plot_predictions(network, X, y, X_scale, y_scale)
     X *= X_scale
     y *= y_scale
@@ -20,7 +53,7 @@ function plot_predictions(network, X, y, X_scale, y_scale)
     display(plot(sequence_layer, predicted_layer, Guide.xlabel("X"), Guide.ylabel("y"), Guide.title("Prediction"), Guide.manual_color_key("Legend",["Data","Prediction"], [Gadfly.current_theme().default_color,"green"])))
 end
 
-function fixed_sequence_example()
+function exponential_sequence_example()
     input_size = 1
     hidden_sizes = [100 200 100]
     output_size = 1
@@ -84,39 +117,6 @@ function random_sequence_example()
     plot_predictions(network, X, y, X_scale, y_scale)
 end
 
-function grid(x_min, x_max, y_min, y_max, h)
-    n = floor(Int, (y_max - y_min) / h)
-    m = floor(Int, (x_max - x_min) / h)
-    xx = zeros(n, m)
-    yy = zeros(n, m)
-    
-    for i = 1:n, j = 1:m
-        xx[i,j] = x_min + h*(j-1)
-    end
-
-    for i = 1:n, j = 1:m
-        yy[i,j] = y_min + h*(i-1)
-    end
-
-    return (xx, yy)
-end
-
-function plot_decision_boundary(network, X, y)
-    x_min = minimum(X[:, 1]) - 0.5
-    x_max = maximum(X[:, 1]) + 0.5
-    y_min = minimum(X[:, 2]) - 0.5
-    y_max = maximum(X[:, 2]) + 0.5
-    h = 0.01
-
-    xx, yy = grid(x_min, x_max, y_min, y_max, h)
-    xy = [reshape(xx, (size(xx, 1)*size(xx, 2), 1)) reshape(yy, (size(yy, 1)*size(yy, 2), 1))]
-    Z = reshape(round.(predict!(network, xy).result), size(xx))
-    Gadfly.push_theme(:dark)
-    boundary = layer(z=collect(transpose(Z)), x=xx[1, :], y=yy[:, 1], Geom.contour)
-    scatter = layer(x=X[:,1], y=X[:,2], color=y[:,1], Geom.point)
-    display(plot(boundary, scatter))
-end
-
 function random_decision_boundary_example()
     input_size = 2
     hidden_sizes = [10 20 30 20 10]
@@ -140,13 +140,5 @@ function random_decision_boundary_example()
     train!(network, X, y, 1000)
     plot_decision_boundary(network, X, y)
 end
-
-# function test()
-#     xx, yy = grid(0, 4, 0, 3, 1)
-#     Z = [1 1 1 1; 0 1 1 1; 0 0 0 0]
-#     Gadfly.push_theme(:dark)
-#     boundary = layer(z=collect(transpose(Z)), x=xx[1, :], y=yy[:, 1], Geom.contour)
-#     display(plot(boundary))
-# end
 
 end
