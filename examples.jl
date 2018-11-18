@@ -122,19 +122,16 @@ function decision_boundary_example()
     hidden_sizes = [10 20 30 20 10]
     output_size = 1
 
-    X = sort(randn((100, 2)), dims=1)
-    # y = rand(0:1, (100, 1))
+    X = randn((100, 2))
     y = zeros((100, 1))
-    y[1] = 1
-    y[2] = 1
-    y[3] = 1
-    y[4] = 1
-    y[5] = 1
-    y[6] = 1
-    y[7] = 1
-    y[8] = 1
-    y[9] = 1
-    y[10] = 1
+
+    quandrant = (q1=rand(-1:2:1), q2=rand(-1:2:1))
+
+    for i = 1:100
+        if quandrant.q1*X[i,1] > 0 && quandrant.q2*X[i,2] > 0
+            y[i] = 1
+        end 
+    end
     
     network = setup(input_size, hidden_sizes, output_size)
     train!(network, X, y, 1000)
