@@ -36,7 +36,7 @@ function plot_decision_boundary(network, X, y)
     Gadfly.push_theme(:dark)
     boundary = layer(z=collect(transpose(Z)), x=xx[1, :], y=yy[:, 1], Geom.contour)
     scatter = layer(x=X[:,1], y=X[:,2], color=y[:,1], Geom.point)
-    return plot(boundary, scatter, Guide.xlabel("x"), Guide.ylabel("y"), Guide.title("Decison Boundary"), Guide.manual_color_key("Legend",["Decision Boundary","Data"], [Gadfly.current_theme().default_color,"green"]))
+    return plot(boundary, scatter, Guide.xlabel("x"), Guide.ylabel("y"), Guide.title("Decison Boundary"))
 end
 
 function plot_predictions(network, X, y, X_scale, y_scale, title)
