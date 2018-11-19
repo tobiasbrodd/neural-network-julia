@@ -36,10 +36,10 @@ function plot_decision_boundary(network, X, y)
     Gadfly.push_theme(:dark)
     boundary = layer(z=collect(transpose(Z)), x=xx[1, :], y=yy[:, 1], Geom.contour)
     scatter = layer(x=X[:,1], y=X[:,2], color=y[:,1], Geom.point)
-    display(plot(boundary, scatter))
+    return plot(boundary, scatter, Guide.xlabel("x"), Guide.ylabel("y"), Guide.title("Decison Boundary"), Guide.manual_color_key("Legend",["Decision Boundary","Data"], [Gadfly.current_theme().default_color,"green"]))
 end
 
-function plot_predictions(network, X, y, X_scale, y_scale)
+function plot_predictions(network, X, y, X_scale, y_scale, title)
     X *= X_scale
     y *= y_scale
 
@@ -48,9 +48,9 @@ function plot_predictions(network, X, y, X_scale, y_scale)
     XP *= X_scale
     yp *= y_scale
     Gadfly.push_theme(:dark)
-    sequence_layer = layer(x=X, y=y, Geom.line)
-    predicted_layer = layer(x=XP, y=yp, Theme(default_color="green"), Geom.line)
-    display(plot(sequence_layer, predicted_layer, Guide.xlabel("X"), Guide.ylabel("y"), Guide.title("Prediction"), Guide.manual_color_key("Legend",["Data","Prediction"], [Gadfly.current_theme().default_color,"green"])))
+    predicted_layer = layer(x=XP, y=yp, Geom.line)
+    sequence_layer = layer(x=X, y=y, Theme(default_color="green"), Geom.line)
+    return plot(predicted_layer, sequence_layer, Guide.xlabel("X"), Guide.ylabel("y"), Guide.title(title), Guide.manual_color_key("Legend",["Prediction", "Data"], [Gadfly.current_theme().default_color,"green"]))
 end
 
 function exponential_sequence_example()
@@ -70,8 +70,9 @@ function exponential_sequence_example()
     y /= y_scale
 
     network = setup(input_size, hidden_sizes, output_size)
-    train!(network, X, y, 1000)
-    plot_predictions(network, X, y, X_scale, y_scale)
+    train!(network, X, y, 10000)
+    nn_plot = plot_predictions(network, X, y, X_scale, y_scale, "Exponential Sequence")
+    display(nn_plot)
 end
 
 function normal_sequence_example()
@@ -94,8 +95,9 @@ function normal_sequence_example()
     y /= y_scale
 
     network = setup(input_size, hidden_sizes, output_size)
-    train!(network, X, y, 1000)
-    plot_predictions(network, X, y, X_scale, y_scale)
+    train!(network, X, y, 10000)
+    nn_plot = plot_predictions(network, X, y, X_scale, y_scale, "Normally Distributed Sequence")
+    display(nn_plot)
 end
 
 function random_sequence_example()
@@ -113,8 +115,9 @@ function random_sequence_example()
     y /= y_scale
 
     network = setup(input_size, hidden_sizes, output_size)
-    train!(network, X, y, 1000)
-    plot_predictions(network, X, y, X_scale, y_scale)
+    train!(network, X, y, 10000)
+    nn_plot = plot_predictions(network, X, y, X_scale, y_scale, "Random Sequence")
+    display(nn_plot)
 end
 
 function decision_boundary_example()
@@ -134,10 +137,9 @@ function decision_boundary_example()
     end
     
     network = setup(input_size, hidden_sizes, output_size)
-    train!(network, X, y, 1000)
-    plot_decision_boundary(network, X, y)
+    train!(network, X, y, 10000)
+    nn_plot = plot_decision_boundary(network, X, y)
+    display(nn_plot)
 end
-
-decision_boundary_example()
 
 end
